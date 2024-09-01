@@ -1,4 +1,5 @@
 import os
+import re
 
 extensions = (
     # 常见编程语言
@@ -31,8 +32,28 @@ def get_code_files(repo_path, ext=extensions):
                 code_files.append(relative_path)
     return code_files
 
-# 示例用法
-repo_path = 'D:\eduplatform-backend'  # 替换为你的代码仓库路径
-  # 可以根据需要添加扩展名
-code_files = get_code_files(repo_path, extensions)
+
+
+
+def get_project_name(input_string, custom_name=None):
+    if custom_name:
+        return custom_name
+
+    # 处理本地路径
+    if os.path.sep in input_string:
+        return os.path.basename(input_string.rstrip(os.path.sep))
+
+    # 处理Git SSH地址
+    ssh_match = re.match(r'git@.*:(.+)\.git', input_string)
+    if ssh_match:
+        return ssh_match.group(1).split('/')[-1]
+
+    # 处理Git HTTP地址
+    http_match = re.match(r'https?://.*?/(.+?)(?:\.git)?$', input_string)
+    if http_match:
+        return http_match.group(1).split('/')[-1]
+
+    # 如果无法识别，返回原字符串
+    return input_string
+
 
