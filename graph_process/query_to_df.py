@@ -8,6 +8,11 @@ def execute_query(graph, query, params=None):
     columns = result.keys()
     return pd.DataFrame(records, columns=columns)
 
+def query_by_sql(graph, sql, params=None):
+    df = execute_query(graph, sql, params)
+    print(df.to_markdown(index=False))
+    return df
+
 def query_file(graph, match_dict, where_dict, return_dict):
     query = f"""
     MATCH {match_dict['pattern']}
@@ -24,10 +29,7 @@ def query_raw(graph, query, params=None):
     print(df.to_markdown(index=False))
     return df
 
-def query_by_sql(graph, sql, params=None):
-    df = execute_query(graph, sql, params)
-    print(df.to_markdown(index=False))
-    return df
+
 
 PROJECT_ROOT_FILES_SQL = f"""
     MATCH (d:{DIRECTORY_TYPE} {{project_name: $project_name}})-[:CONTAINS]->(f:{FILE_TYPE})
